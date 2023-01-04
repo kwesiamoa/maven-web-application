@@ -1,0 +1,68 @@
+pipeline{
+    agent any
+    
+    tools {
+        maven "maven3.8.6"
+    }
+    stages{
+        stage('1.GetCode'){
+            steps{
+                sh "echo 'Cloning the latest application version' "
+                git branch: 'master', credentialsId: 'Githubcredentials', url: 'https://github.com/kwesiamoa/maven-web-application'
+            }
+        }
+        stage('2.Unit Test & 3.Build'){
+            steps{
+                sh "echo 'running Junit Test Cases' "
+                sh "echo 'testing must pass to create artifacts ' "
+                sh "mvn clean package"
+        }
+    }
+    /*
+        stage('4.Code Quality'){
+            steps{
+                sh "echo 'Performing Code Quality Analysis' "
+                sh "mvn sonar:sonar"
+            }
+        }
+     */      
+        stage('5.Upload Nexus'){
+      steps{
+        sh "mvn deploy"
+      }
+    }   
+        
+    
+    //    options{}
+    
+    /*
+   post{
+    always{
+      emailext body: '''Hey guys                    //snippet Generator- emailtext-Extended Email 
+Please check build status.
+
+Thanks
+Landmark 
++1 437 215 2483''', recipientProviders: [buildUser(), developers()], subject: 'success', to: 'paypal-team@gmail.com'
+    }
+    success{
+      emailext body: '''Hey guys
+Good job build and deployment is successful.
+
+Thanks
+Landmark 
++1 437 215 2483''', recipientProviders: [buildUser(), developers()], subject: 'success', to: 'paypal-team@gmail.com'
+    } 
+    failure{
+      emailext body: '''Hey guys
+Build failed. Please resolve issues.
+
+Thanks
+Landmark 
++1 437 215 2483''', recipientProviders: [buildUser(), developers()], subject: 'success', to: 'paypal-team@gmail.com'
+    }
+    
+    }  
+    */
+}
+}
